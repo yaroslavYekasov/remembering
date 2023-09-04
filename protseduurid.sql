@@ -29,3 +29,14 @@ end;
 
 exec kustutaGuest 3;
 
+--count
+
+create procedure countGuests
+as
+begin
+    declare @count int;
+    select @count = count(*) from guest;
+    select @count as 'GuestCount';
+end;
+
+exec countGuests;
