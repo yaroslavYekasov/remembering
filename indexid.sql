@@ -1,4 +1,4 @@
---Mitme avaldisega tabeliv‰‰rtusega funktsioonid
+--Mitme avaldisega tabeliv√§√§rtusega funktsioonid
 
 Create Function fn_ILTVF_GetEmployees()
 Returns Table
@@ -23,7 +23,7 @@ select * from fn_MSTVF_GetEmployees();
 Update fn_MSTVF_GetEmployees2() set Name='Sam 1' where id=1
 select * from fn_MSTVF_GetEmployees2();
 
---Funktsiooniga seotud t‰htsad kontseptsioonid
+--Funktsiooniga seotud t√§htsad kontseptsioonid
 
 create function fn_GetEmployeeNameBuild(@id int)
 Returns varchar(20)
