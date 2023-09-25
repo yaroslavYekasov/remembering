@@ -103,7 +103,7 @@ exec sys.sp_helpindex @Objname='DimEmployee'
 
 drop index DimEmployee.IX_DimEmployee_BaseRate
 
-36. Klastreeritud ja mitte-klastreeritud indeksid
+--36. Klastreeritud ja mitte-klastreeritud indeksid
 
 select * from DimEmployee;
 
@@ -139,7 +139,7 @@ Select * from tbEmployee
 create NonClustered index IX_tbEmployee_Name
 on tbEmployee(Name)
 
-37. Unikaalne ja mitte-unikaalne indeks
+--37. Unikaalne ja mitte-unikaalne indeks
 
 create table [tbEmployee]
 (
@@ -168,7 +168,7 @@ CREATE UNIQUE INDEX IX_tblEmployee_City
 ON tbEmployee(City)
 WITH IGNORE_DUP_KEY
 
-38. Indeksi plussid ja miinused
+--38. Indeksi plussid ja miinused
 
 create table [tblEmployee]
 (
