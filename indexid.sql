@@ -102,3 +102,71 @@ select top 10 * from DimEmployee order by IX_DimEmployee_BaseRate
 exec sys.sp_helpindex @Objname='DimEmployee'
 
 drop index DimEmployee.IX_DimEmployee_BaseRate
+
+36. Klastreeritud ja mitte-klastreeritud indeksid
+
+select * from DimEmployee;
+
+execute sp_helpindex [tbEmployee];
+
+create table [tbEmployee]
+(
+[id] int Primary Key,
+[Name] nvarchar(50),
+[Salary] int,
+[Gender] nvarchar(10),
+[City] nvarchar(10)
+)
+
+insert into [tbEmployee] Values(3,'John',4500,'Male','New York')
+insert into [tbEmployee] Values(1,'Don',3400,'Male','London')
+insert into [tbEmployee] Values(4,'Gan',6500,'Female','Tokyo')
+insert into [tbEmployee] Values(5,'Pid',2100,'Female','Toronto')
+insert into [tbEmployee] Values(2,'Onas',2400,'Male','Sydney')
+
+Select * from [tbEmployee]
+
+create Clustered Index IX_tbEmployee_Name
+ON [tbEmployee](Name)
+
+Drop index [tbEmployee].PK__tbEmploy__3213E83F65501ADA
+
+create Clustered index IX_tblEmployee_Gender_Salary
+on tbEmployee(Gender desc, Salary ASC)
+
+Select * from tbEmployee
+
+create NonClustered index IX_tbEmployee_Name
+on tbEmployee(Name)
+
+37. Unikaalne ja mitte-unikaalne indeks
+
+create table [tbEmployee]
+(
+[id] int Primary Key,
+[Name] nvarchar(50),
+[Salary] int,
+[Gender] nvarchar(10),
+[City] nvarchar(10)
+)
+
+execute sp_helpindex [tbEmployee];
+
+insert into [tbEmployee] Values(1,'John',4500,'Male','New York')
+insert into [tbEmployee] Values(1,'Don',3400,'Male','London')
+
+drop index tbEmployee.PK__tbEmploy__3213E83F55419F46
+
+Create Unique NonClustered Index UIX_tblEmployee_Name_City
+on tbEmployee(Name desc, City ASC)
+
+ALTER TABLE tbEmployee 
+ADD CONSTRAINT UQ_tblEmployee_City 
+UNIQUE NONCLUSTERED (City)
+
+CREATE UNIQUE INDEX IX_tblEmployee_City
+ON tbEmployee(City)
+WITH IGNORE_DUP_KEY
+
+
+
