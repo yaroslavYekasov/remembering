@@ -168,5 +168,39 @@ CREATE UNIQUE INDEX IX_tblEmployee_City
 ON tbEmployee(City)
 WITH IGNORE_DUP_KEY
 
+38. Indeksi plussid ja miinused
+
+create table [tblEmployee]
+(
+[id] int primary key,
+[FirstName] nvarchar(50),
+[LastName] nvarchar(50),
+[Salary] int,
+[Gender] nvarchar(10),
+[City] nvarchar(50)
+)
+
+insert into tblEmployee Values(1, 'Mike', 'Groshev', 5400, 'Male', 'New York')
+insert into tblEmployee Values(2, 'Luca', 'Kerekesha', 7600, 'Female', 'Kyiv')
+insert into tblEmployee Values(3, 'Max', 'Yanovich', 2300, 'Female', 'Moscow')
+insert into tblEmployee Values(4, 'Mona', 'Grozny', 1200, 'Male', 'Tokyo')
+insert into tblEmployee Values(5, 'Lisa', 'Veliky', 9100, 'Female', 'Las Vegas')
+
+select * from tblEmployee;
+
+create nonClustered index IX_tblEmployee_Salary
+on tblEmployee (Salary Asc)
+
+select * from tblEmployee where Salary>4000 and Salary<8000
+
+delete from tblEmployee where Salary=2500
+update tblEmployee Set Salary=9000 where Salary = 7500
+
+select * from tblEmployee order by Salary desc
+
+select Salary, count(Salary) as Total
+from tblEmployee
+Group by Salary
+
 
 
