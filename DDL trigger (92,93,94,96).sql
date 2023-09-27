@@ -1,67 +1,59 @@
---92 DDL Trigger SQL serveris
+--92 DDL Trigger SQL Server
 
+-- Loo DDL-triger, mis jälgib andmebaasisiseseid CREATE_TABLE sündmusi.
 create trigger trMyNotFirstTrigger
 on database
 for CREATE_TABLE
 as
 begin
-	print 'New table  created'
+    print 'Uus tabel loodud'
 end
 
-Create table Test (Id int)
-
+-- Muuda olemasolevat trigerit, et see reageeriks ka ALTER_TABLE ja DROP_TABLE sündmustele.
 alter trigger trMyNotFirstTrigger
 on Database
 for CREATE_TABLE, ALTER_TABLE, DROP_TABLE
 as
 begin
-	print 'A table has just been created, modified or deleted'
+    print 'Tabelit on just loodud, muudetud või kustutatud'
 end
 
 DROP TABLE Test;
 
+-- Muuda trigerit, et see takistaks tabelite loomist, muutmist või kustutamist.
 alter trigger trMyNotFirstTrigger
 on Database
 for CREATE_TABLE, ALTER_TABLE, DROP_TABLE
 as
 begin
-rollback
-	print 'you can not create, alter or a drop table'
+    rollback
+    print 'Sa ei saa luua, muuta ega kustutada tabelit'
 end
 
 disable trigger trMyNotFirstTrigger on database
 
-create trigger trRenameTable
-on database
-for RENAME
-as
-begin
-	Print 'You just renamed something'
-end
-
-
-sp_rename 'DimEmployee', 'tblEmployee' 
-
 --93 Server-Scoped DDL triggerid
-
+	
+-- Loo andmebaasi ja serveri tasandi trigerid, mis reageerivad CREATE_TABLE, ALTER_TABLE ja DROP_TABLE sündmustele.
 create trigger tr_DatabaseScopeTrigger
 on database
 for create_table, alter_table, drop_table
 as
 begin
-	rollback
-	Print'You cannot create, alter or drop a table in the current database'
+    rollback
+    print 'Sa ei saa luua, muuta ega kustutada tabelit selles andmebaasis'
 end
 
 Create table Test (Id int)
 
+-- Loo serveri tasandi triger, mis takistab tabelite loomist, muutmist või kustutamist serveri kõigis andmebaasides.
 create trigger tr_ServerScopeTrigger
 on all server
 for create_table, alter_table, drop_table
 as
 begin
-	rollback
-	print 'You cannot create, alter or drop a tablein any database on the server'
+    rollback
+    print 'Sa ei saa luua, muuta ega kustutada tabelit üheski andmebaasis serveris'
 end
 
 Create table Test (Id int)
@@ -81,57 +73,36 @@ Create table Test (Id int)
 
 drop trigger tr_ServerScopeTrigger on all server
 
---94 SQL serveri trigeri täitmise järjekord
-
-create trigger tr_DatabaseScopeTrigger
-on database
-for create_table
-as
-begin
-	Print'Database Scope Trigger'
-end
-go
-
-create trigger tr_ServerScopeTrigger
-on all server
-for create_table
-as
-begin
-	print 'Server Scope Trigger'
-end
-go
-
-CREATE TABLE Test (Id INT);
-
-drop table Test
-
+--94 SQL Serveri trigerite täitmise järjekord
+	
+-- Määra trigerite täitmise järjekord tabeli loomisel andmebaasis.
 exec sp_settriggerorder
 @triggername = 'tr_DatabaseScopeTrigger',
 @order = 'none',
 @stmttype = 'create_table',
 @namespace = 'database'
-go
 
 EXEC sp_helptrigger 'Test';
 
---96 Logon trigger SQL serveris
+--96 Logon trigger SQL Serveris
 
+-- Loo logon-triger, mis jälgib sisselogimissündmusi ja blokeerib liiga palju ühendusi.
 create trigger tr_LogonAuditTriggers
 on all server
 for LOGON
 as
 begin
-	declare @LoginName nvarchar(100)
+    declare @LoginName nvarchar(100)
 
-	set @LoginName = ORIGINAL_LOGIN()
+    set @LoginName = ORIGINAL_LOGIN()
 
-	if(select count(*)from sys.dm_exec_sessions
-		where is_user_process=1
-		and original_login_name = @LoginName)>3
-	begin
-		print 'Fourght connection of' + @LoginName + 'blocked'
-		rollback
-	end
+    if (select count(*) from sys.dm_exec_sessions
+        where is_user_process=1
+        and original_login_name = @LoginName) > 3
+    begin
+        print 'Neljas ühendus kasutajalt ' + @LoginName + ' on blokeeritud'
+        rollback
+    end
 end
 
 drop trigger tr_LogonAuditTriggers on all server
