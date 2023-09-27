@@ -88,7 +88,7 @@ Group by DeptName
 
 select * from vwEmployeesCountByDepartment;
 
-drop view vwEmployeesCountByDepartment on database
+drop view vwEmployeesCountByDepartment
 
 --40. View uuendused
 
