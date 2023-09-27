@@ -1,0 +1,139 @@
+--92 DDL Trigger SQL serveris
+
+create trigger trMyNotFirstTrigger
+on database
+for CREATE_TABLE
+as
+begin
+	print 'New table  created'
+end
+
+Create table Test (Id int)
+
+alter trigger trMyNotFirstTrigger
+on Database
+for CREATE_TABLE, ALTER_TABLE, DROP_TABLE
+as
+begin
+	print 'A table has just been created, modified or deleted'
+end
+
+DROP TABLE Test;
+
+alter trigger trMyNotFirstTrigger
+on Database
+for CREATE_TABLE, ALTER_TABLE, DROP_TABLE
+as
+begin
+rollback
+	print 'you can not create, alter or a drop table'
+end
+
+disable trigger trMyNotFirstTrigger on database
+
+create trigger trRenameTable
+on database
+for RENAME
+as
+begin
+	Print 'You just renamed something'
+end
+
+
+sp_rename 'DimEmployee', 'tblEmployee' 
+
+--93 Server-Scoped DDL triggerid
+
+create trigger tr_DatabaseScopeTrigger
+on database
+for create_table, alter_table, drop_table
+as
+begin
+	rollback
+	Print'You cannot create, alter or drop a table in the current database'
+end
+
+Create table Test (Id int)
+
+create trigger tr_ServerScopeTrigger
+on all server
+for create_table, alter_table, drop_table
+as
+begin
+	rollback
+	print 'You cannot create, alter or drop a tablein any database on the server'
+end
+
+Create table Test (Id int)
+
+disable trigger tr_ServerScopeTrigger on all server
+
+Create table Test (Id int)
+
+disable trigger trMyNotFirstTrigger on database;
+disable trigger tr_DatabaseScopeTrigger on  database;
+
+enable trigger tr_ServerScopeTrigger on all server
+
+drop table Test
+
+Create table Test (Id int)
+
+drop trigger tr_ServerScopeTrigger on all server
+
+--94 SQL serveri trigeri täitmise järjekord
+
+create trigger tr_DatabaseScopeTrigger
+on database
+for create_table
+as
+begin
+	Print'Database Scope Trigger'
+end
+go
+
+create trigger tr_ServerScopeTrigger
+on all server
+for create_table
+as
+begin
+	print 'Server Scope Trigger'
+end
+go
+
+CREATE TABLE Test (Id INT);
+
+drop table Test
+
+exec sp_settriggerorder
+@triggername = 'tr_DatabaseScopeTrigger',
+@order = 'none',
+@stmttype = 'create_table',
+@namespace = 'database'
+go
+
+EXEC sp_helptrigger 'Test';
+
+--96 Logon trigger SQL serveris
+
+create trigger tr_LogonAuditTriggers
+on all server
+for LOGON
+as
+begin
+	declare @LoginName nvarchar(100)
+
+	set @LoginName = ORIGINAL_LOGIN()
+
+	if(select count(*)from sys.dm_exec_sessions
+		where is_user_process=1
+		and original_login_name = @LoginName)>3
+	begin
+		print 'Fourght connection of' + @LoginName + 'blocked'
+		rollback
+	end
+end
+
+drop trigger tr_LogonAuditTriggers on all server
+
+Execute sp_readerrorlog
