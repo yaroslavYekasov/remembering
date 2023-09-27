@@ -81,7 +81,7 @@ Create table Test (Id int)
 
 drop trigger tr_ServerScopeTrigger on all server
 
---94 SQL serveri trigeri täitmise järjekord
+--94 SQL serveri trigeri tÃ¤itmise jÃ¤rjekord
 
 create trigger tr_DatabaseScopeTrigger
 on database
