@@ -78,6 +78,18 @@ Group by DeptName
 
 select * from vwEmployeesCountByDepartment
 
+create view vwEmployeesCountByDepartment
+as
+select DeptName, COUNT(id) as TotalEmployees
+from tblEmployees
+join tblDepartment
+on tblEmployees.DepartmentId=tblDepartment.DeptId
+Group by DeptName
+
+select * from vwEmployeesCountByDepartment;
+
+drop view vwEmployeesCountByDepartment on database
+
 --40. View uuendused
 
 
